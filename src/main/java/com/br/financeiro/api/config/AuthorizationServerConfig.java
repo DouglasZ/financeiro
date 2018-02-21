@@ -1,5 +1,8 @@
 package com.br.financeiro.api.config;
 
+import java.util.Arrays;
+
+import com.br.financeiro.api.config.token.CustomTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +11,9 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
@@ -37,7 +40,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 				.authorizedGrantTypes( "password", "refresh_token" )
 				.accessTokenValiditySeconds( 10000 ) //Indica quantos segundos o accessToken fica funcionando
 				.refreshTokenValiditySeconds( 3600 * 24 )
-			.and()
+				.and()
 				.withClient( "mobile" )
 				.secret( "m0b1l30" )
 				.scopes( "read" )
@@ -52,12 +55,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure( AuthorizationServerEndpointsConfigurer endpoints ) throws Exception
 	{
+		//Criamos uma cadeia de Tokens incrementados. Com isso, podemos adicionar qualquer informação dentro do Token
+		final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+		tokenEnhancerChain.setTokenEnhancers( Arrays.asList( tokenEnhancer(), accessTokenConverter() ) );
+
 		endpoints
 				.tokenStore( tokenStore() )
-				.accessTokenConverter( accessTokenConverter() ) // Foi adicionando para usar o JWT
+				.tokenEnhancer( tokenEnhancerChain ) //Foi adicionando para usar o JWT. Adicionamos informações no Token
 				.reuseRefreshTokens( false )
 				.authenticationManager( authenticationManager ); //Verificamos se o usuário e senha está tudo certo
-
 	}
 
 	/**
@@ -80,5 +86,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		//Agora estamos usando o JWT Token
 		return new JwtTokenStore( accessTokenConverter() );
 		//return new InMemoryTokenStore();
+	}
+
+	/**
+	 *
+	 */
+	@Bean
+	public TokenEnhancer tokenEnhancer()
+	{
+		return new CustomTokenEnhancer();
 	}
 }
