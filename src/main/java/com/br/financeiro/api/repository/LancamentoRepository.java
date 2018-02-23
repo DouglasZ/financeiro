@@ -20,9 +20,9 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long>, L
 			+ "WHERE (LOWER(lancamento.descricao) LIKE '%' || LOWER(CAST(:descricao AS string))  || '%' OR :descricao IS NULL) "
 			+ "AND (lancamento.dataVencimento >= :dataInicial OR CAST(:dataInicial AS timestamp) IS NULL) "
 			+ "AND (lancamento.dataVencimento <= :dataFinal OR CAST(:dataFinal AS timestamp) IS NULL)")
-	public Page<Lancamento> listByFilters( @Param("descricao") String descricao,
-										   @Param("dataInicial") LocalDate dataInicial,
-										   @Param("dataFinal") LocalDate dataFinal,
-										   Pageable pageable);
+	Page<Lancamento> listByFilters( @Param("descricao") String descricao,
+									@Param("dataInicial") LocalDate dataInicial,
+									@Param("dataFinal") LocalDate dataFinal,
+									Pageable pageable );
 
 }
