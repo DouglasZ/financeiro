@@ -7,7 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("application-config")
 public class FinanceiroApiProperty
 {
-	private String host = "http://localhost:4200";
+	// A Configuração está no application.properties
+	private String host;
 
 	private final Seguranca seguranca = new Seguranca();
 
