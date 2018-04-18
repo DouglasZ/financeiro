@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class ResumoLancamento
 {
-	private Long codigo;
+	private Long id;
 	private String descricao;
 	private LocalDate dataVencimento;
 	private LocalDate dataPagamento;
@@ -18,10 +18,10 @@ public class ResumoLancamento
 	private String categoria;
 	private String pessoa;
 
-	public ResumoLancamento( Long codigo, String descricao, LocalDate dataVencimento, LocalDate dataPagamento,
+	public ResumoLancamento( Long id, String descricao, LocalDate dataVencimento, LocalDate dataPagamento,
 							 BigDecimal valor, TipoLancamento tipo, String categoria, String pessoa )
 	{
-		this.codigo = codigo;
+		this.id = id;
 		this.descricao = descricao;
 		this.dataVencimento = dataVencimento;
 		this.dataPagamento = dataPagamento;
