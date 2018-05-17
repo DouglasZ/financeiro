@@ -3,10 +3,6 @@ package com.br.financeiro.api.resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import com.br.financeiro.api.event.RecursoCriadoEvent;
-import com.br.financeiro.api.model.Pessoa;
-import com.br.financeiro.api.repository.PessoaRepository;
-import com.br.financeiro.api.service.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -24,6 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.br.financeiro.api.event.RecursoCriadoEvent;
+import com.br.financeiro.api.model.Pessoa;
+import com.br.financeiro.api.repository.PessoaRepository;
+import com.br.financeiro.api.service.PessoaService;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -61,7 +62,7 @@ public class PessoaResource
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	public ResponseEntity<Pessoa> criar( @Valid @RequestBody Pessoa pessoa, HttpServletResponse response )
 	{
-		final Pessoa pessoaSalva = this.pessoaRepository.save( pessoa );
+		final Pessoa pessoaSalva = this.pessoaService.salvar( pessoa );
 
 		this.publisher.publishEvent( new RecursoCriadoEvent( this, response, pessoaSalva.getId() ) );
 

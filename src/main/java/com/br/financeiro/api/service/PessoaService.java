@@ -19,12 +19,29 @@ public class PessoaService
 	/**
 	 *
 	 */
+	public Pessoa salvar( Pessoa pessoa )
+	{
+		// Devido ao @JsonIgnoreProperties para evitar o StackOverflow devemos setar a pessoa em contato ao salvar
+		pessoa.getContatos().forEach( contato -> contato.setPessoa( pessoa ) );
+
+		return this.pessoaRepository.save( pessoa );
+	}
+
+	/**
+	 *
+	 */
 	public Pessoa atualizar( Long id, Pessoa pessoa )
 	{
 		final Pessoa pessoaSalva = this.buscarPessoaById( id );
 
-		//Faz a cópia do obj pessoa para o obj pessoaSala que veio do banco ignorando apenas o id
-		BeanUtils.copyProperties( pessoa, pessoaSalva, "id" );
+		// Quando o contato é removido de pessoa e a lista de contato fica vazia ela deixa de ser uma Lista Persistente
+		// Por isso devemos trabalhar com a lista de pessoaSalva pois como foi retornado do banco ela ainda é uma lista Persistente
+		pessoaSalva.getContatos().clear(); // Apenas limpamos os dados da lista e não criamos uma nova instancia pra não perder a lista persistente
+		pessoaSalva.getContatos().addAll( pessoa.getContatos() ); // Setamos a lista de contatos que veio por parametro na lista persistente
+		pessoaSalva.getContatos().forEach( contato -> contato.setPessoa( pessoaSalva ) );
+
+		//Faz a cópia do obj pessoa para o obj pessoaSalva que veio do banco ignorando apenas o id e o contatos
+		BeanUtils.copyProperties( pessoa, pessoaSalva, "id", "contatos" );
 
 		return this.pessoaRepository.save( pessoaSalva );
 	}
