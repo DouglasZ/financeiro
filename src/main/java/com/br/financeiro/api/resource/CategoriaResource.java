@@ -1,6 +1,7 @@
 package com.br.financeiro.api.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -77,7 +78,7 @@ public class CategoriaResource
 	@PreAuthorize("hasAnyAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
 	public ResponseEntity<Categoria> findCategoriaById( @PathVariable Long id )
 	{
-		final Categoria categoria = categoriaRepository.findOne( id );
-		return categoria != null ? ResponseEntity.ok( categoria ) : ResponseEntity.notFound().build();
+		final Optional<Categoria> categoria = categoriaRepository.findById( id );
+		return categoria.isPresent() ? ResponseEntity.ok( categoria.get() ) : ResponseEntity.notFound().build();
 	}
 }

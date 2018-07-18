@@ -34,7 +34,7 @@ public class S3
 	@Autowired
 	private FinanceiroApiProperty property;
 
-	@Autowired
+	@Autowired(required = false)
 	private AmazonS3 amazonS3;
 
 	public String salvarTemporariamente( MultipartFile arquivo )

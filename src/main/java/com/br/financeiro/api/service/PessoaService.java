@@ -1,5 +1,7 @@
 package com.br.financeiro.api.service;
 
+import java.util.Optional;
+
 import com.br.financeiro.api.model.Pessoa;
 import com.br.financeiro.api.repository.PessoaRepository;
 import org.springframework.beans.BeanUtils;
@@ -62,14 +64,14 @@ public class PessoaService
 	 */
 	public Pessoa buscarPessoaById( Long id )
 	{
-		final Pessoa pessoaSalva = this.pessoaRepository.findOne( id );
+		final Optional <Pessoa> pessoaSalva = this.pessoaRepository.findById( id );
 
 		//Validamos se o ID não for encontrado e apresentamos uma exceção
-		if ( pessoaSalva == null )
+		if ( !pessoaSalva.isPresent() )
 		{
 			//Esperava pelo menos 1 elemente e foi encontrado 0
 			throw new EmptyResultDataAccessException( 1 );
 		}
-		return pessoaSalva;
+		return pessoaSalva.get();
 	}
 }

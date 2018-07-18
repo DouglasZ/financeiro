@@ -2,15 +2,14 @@ package com.br.financeiro.api.config;
 
 import java.util.Arrays;
 
-import com.br.financeiro.api.config.token.CustomTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
@@ -18,9 +17,10 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import com.br.financeiro.api.config.token.CustomTokenEnhancer;
+
 @Profile("oauth-security")
 @Configuration
-@EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter
 {
 	/**
@@ -28,6 +28,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	 */
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	/**
+	 *
+	 */
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Autorizamos o cliente acessar o Authorizationserver
@@ -37,14 +42,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	{
 		clients.inMemory()
 				.withClient( "angular" )
-				.secret( "@ngul@r0" )
+				.secret( "$2a$10$64hNt1xkTDoJOPH3yP/joOSAGDNHDkcNrB5eXlGj8Sdkl.lMjUXdG" ) // @ngul@r0
 				.scopes( "read", "write" )
 				.authorizedGrantTypes( "password", "refresh_token" )
 				.accessTokenValiditySeconds( 10000 ) //Indica quantos segundos o accessToken fica funcionando
 				.refreshTokenValiditySeconds( 3600 * 24 )
 				.and()
 				.withClient( "mobile" )
-				.secret( "m0b1l30" )
+				.secret( "$2a$10$Ps0OJZPFQF7muNhYs7H8C.PB4O6Ft9j3ncqOSfQ/HSpuJh2wpb4z2" ) // m0b1l30
 				.scopes( "read" )
 				.authorizedGrantTypes( "password", "refresh_token" )
 				.accessTokenValiditySeconds( 10000 ) //Indica quantos segundos o accessToken fica funcionando
@@ -65,6 +70,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 				.tokenStore( tokenStore() )
 				.tokenEnhancer( tokenEnhancerChain ) //Foi adicionando para usar o JWT. Adicionamos informações no Token
 				.reuseRefreshTokens( false )
+				.userDetailsService( userDetailsService )
 				.authenticationManager( authenticationManager ); //Verificamos se o usuário e senha está tudo certo
 	}
 
