@@ -42,7 +42,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	{
 		clients.inMemory()
 				.withClient( "angular" )
-				.secret( "$2a$10$64hNt1xkTDoJOPH3yP/joOSAGDNHDkcNrB5eXlGj8Sdkl.lMjUXdG" ) // @ngul@r0
+				.secret( "@ngul@r0" ) // @ngul@r0
 				.scopes( "read", "write" )
 				.authorizedGrantTypes( "password", "refresh_token" )
 				.accessTokenValiditySeconds( 10000 ) //Indica quantos segundos o accessToken fica funcionando
