@@ -145,7 +145,7 @@ public class LancamentoService
 	{
 		final Optional<Lancamento> lancamentoSalvo = this.lancamentoRepository.findById( id );
 
-		Assert.isTrue( !lancamentoSalvo.isPresent(),
+		Assert.isTrue( lancamentoSalvo.isPresent(),
 				this.messageSource.getMessage( "notFoundById", new Object[]{id}, LocaleContextHolder.getLocale() ) );
 
 //		if ( lancamentoSalvo == null )
